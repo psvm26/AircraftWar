@@ -1,12 +1,16 @@
 package edu.hitsz.aircraft;
 
+import edu.hitsz.prop.AbstractProp;
+import edu.hitsz.prop.BloodProp;
+import edu.hitsz.prop.BulletProp;
+import edu.hitsz.prop.BombProp;
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
-import edu.hitsz.bullet.HeroBullet;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class EliteEnemy extends AbstractAircraft{
 
@@ -45,7 +49,7 @@ public class EliteEnemy extends AbstractAircraft{
         int x = this.getLocationX();
         int y = this.getLocationY() + direction*1;
         int speedX = 0;
-        int speedY = this.getSpeedY() - direction*5;
+        int speedY = this.getSpeedY() - direction*3;
         BaseBullet bullet;
         for(int i=0; i<shootNum; i++){
             // 子弹发射位置相对飞机位置向前偏移
@@ -54,5 +58,27 @@ public class EliteEnemy extends AbstractAircraft{
             res.add(bullet);
         }
         return res;
+    }
+
+    @Override
+    public void vanish() {
+        super.vanish();
+        System.out.println("Hit");
+    }
+
+    public AbstractProp produceprop() {
+        int x = this.locationX;
+        int y = this.locationY;
+        int speedX = 0;
+        int speedY = this.speedY;
+        Random rand = new Random();
+        int n = rand.nextInt(10);
+        if (n % 3 == 0) {
+            return new BloodProp(x, y, speedX, speedY);
+        } else if (n % 3 == 1) {
+            return new BulletProp(x, y, speedX, speedY);
+        } else {
+            return new BombProp(x, y, speedX, speedY);
+        }
     }
 }

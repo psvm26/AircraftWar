@@ -1,4 +1,4 @@
-package edu.hitsz.Equip;
+package edu.hitsz.prop;
 
 import edu.hitsz.application.Main;
 import edu.hitsz.basic.AbstractFlyingObject;
