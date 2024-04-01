@@ -1,9 +1,10 @@
 package edu.hitsz.application;
 
+import edu.hitsz.Equip.AbstractProp;
+import edu.hitsz.Equip.BloodProp;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
-import edu.hitsz.bullet.EnemyBullet;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import javax.swing.*;
@@ -36,6 +37,7 @@ public class Game extends JPanel {
     private final List<AbstractAircraft> enemyAircrafts;
     private final List<BaseBullet> heroBullets;
     private final List<BaseBullet> enemyBullets;
+    private final List<AbstractProp> Props;
 
     /**
      * 屏幕中出现的敌机最大数量
@@ -72,6 +74,7 @@ public class Game extends JPanel {
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
         enemyBullets = new LinkedList<>();
+        Props = new LinkedList<>();
 
         /**
          * Scheduled 线程池，用于定时任务调度
@@ -142,6 +145,12 @@ public class Game extends JPanel {
         }
     }
 
+    private void propsMoveAction() {
+        for (AbstractProp prop : Props) {
+            prop.forward();
+        }
+    }
+
 
     /**
      * 碰撞检测：
@@ -151,6 +160,15 @@ public class Game extends JPanel {
      */
     private void crashCheckAction() {
         // TODO 敌机子弹攻击英雄
+        for(BaseBullet bullet : enemyBullets) {
+            if (bullet.notValid()) {
+                continue;
+            }
+            if (heroAircraft.crash(bullet)) {
+                heroAircraft.decreaseHp(bullet.getPower());
+                bullet.vanish();
+            }
+        }
 
         // 英雄子弹攻击敌机
         for (BaseBullet bullet : heroBullets) {
@@ -171,6 +189,15 @@ public class Game extends JPanel {
                     if (enemyAircraft.notValid()) {
                         // TODO 获得分数，产生道具补给
                         score += 10;
+                        if(enemyAircraft instanceof EliteEnemy) {
+//                            System.out.println("Crash Elite!");
+                            Random rand = new Random();
+//                            int r = rand.nextInt(10);
+                            int r = 0;
+                            if (r % 10 == 0) {
+                                Props.add(((EliteEnemy) enemyAircraft).produceprop());
+                            }
+                        }
                     }
                 }
                 // 英雄机 与 敌机 相撞，均损毁
@@ -182,6 +209,20 @@ public class Game extends JPanel {
         }
 
         // Todo: 我方获得道具，道具生效
+        for (AbstractProp prop : Props) {
+            if (prop.notValid()) {
+                continue;
+            }
+            else if (prop.crash(heroAircraft)) {
+                prop.vanish();
+                if (prop.notValid()){
+                    prop.func();
+                    if (prop instanceof BloodProp) {
+                        heroAircraft.increaseHp();
+                    }
+                }
+            }
+        }
 
     }
 
@@ -196,6 +237,7 @@ public class Game extends JPanel {
         enemyBullets.removeIf(AbstractFlyingObject::notValid);
         heroBullets.removeIf(AbstractFlyingObject::notValid);
         enemyAircrafts.removeIf(AbstractFlyingObject::notValid);
+        Props.removeIf(AbstractFlyingObject::notValid);
     }
 
 
@@ -223,6 +265,7 @@ public class Game extends JPanel {
 
         // 先绘制子弹，后绘制飞机
         // 这样子弹显示在飞机的下层
+        paintImageWithPositionRevised(g, Props);
         paintImageWithPositionRevised(g, enemyBullets);
         paintImageWithPositionRevised(g, heroBullets);
 
@@ -273,7 +316,6 @@ public class Game extends JPanel {
             Random rand = new Random();
             if (enemyAircrafts.size() < enemyMaxNumber) {
                 int r = rand.nextInt(10);
-                System.out.println(r);
                 if (r % 2 == 0) {
                     enemyAircrafts.add(new MobEnemy(
                             (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
@@ -301,6 +343,9 @@ public class Game extends JPanel {
 
         // 飞机移动
         aircraftsMoveAction();
+
+        //道具移动
+        propsMoveAction();
 
         // 撞击检测
         crashCheckAction();
