@@ -49,6 +49,14 @@ public class HeroAircraft extends AbstractAircraft {
         this.hp += increase;
     }
 
+    public void setShootNum(int shootNum) {
+        this.shootNum = shootNum;
+    }
+
+    public int getShootNum() {
+        return shootNum;
+    }
+
     @Override
     public void forward() {
         // 英雄机由鼠标控制，不通过forward函数移动

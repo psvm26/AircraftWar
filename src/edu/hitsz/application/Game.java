@@ -5,6 +5,8 @@ import edu.hitsz.prop.BloodProp;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
+import edu.hitsz.prop.BombProp;
+import edu.hitsz.prop.BulletProp;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 import javax.swing.*;
@@ -52,6 +54,8 @@ public class Game extends JPanel {
      * 当前时刻
      */
     private int time = 0;
+    private int now = 0;
+    private int continue_time = 10;
 
     /**
      * 周期（ms)
@@ -219,6 +223,12 @@ public class Game extends JPanel {
                     prop.func();
                     if (prop instanceof BloodProp) {
                         heroAircraft.increaseHp();
+                    } else if (prop instanceof BombProp) {
+                        enemyAircrafts.clear();
+                        enemyBullets.clear();
+                    } else if (prop instanceof BulletProp) {
+                        heroAircraft.setShootNum(3);
+                        now = time;
                     }
                 }
             }
@@ -238,6 +248,9 @@ public class Game extends JPanel {
         heroBullets.removeIf(AbstractFlyingObject::notValid);
         enemyAircrafts.removeIf(AbstractFlyingObject::notValid);
         Props.removeIf(AbstractFlyingObject::notValid);
+        //子弹道具持续一段时间
+        if (time - now >= 600 * continue_time && heroAircraft.getShootNum() == 3) {
+            heroAircraft.setShootNum(1);}
     }
 
 

@@ -8,6 +8,6 @@ public class BulletProp extends AbstractProp{
     @Override
     public void func() {
         super.func();
-        System.out.println("“FireSupply active!");
+        System.out.println("FireSupply active!");
     }
 }
