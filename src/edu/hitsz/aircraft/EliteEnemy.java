@@ -1,9 +1,6 @@
 package edu.hitsz.aircraft;
 
-import edu.hitsz.prop.AbstractProp;
-import edu.hitsz.prop.BloodProp;
-import edu.hitsz.prop.BulletProp;
-import edu.hitsz.prop.BombProp;
+import edu.hitsz.prop.*;
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
@@ -60,25 +57,25 @@ public class EliteEnemy extends AbstractAircraft{
         return res;
     }
 
-    @Override
-    public void vanish() {
-        super.vanish();
-        System.out.println("Hit");
-    }
-
     public AbstractProp produceprop() {
         int x = this.locationX;
         int y = this.locationY;
         int speedX = 0;
         int speedY = this.speedY / 2;
+        AbstractProp abstractProp;
+        PropFactory propFactory;
         Random rand = new Random();
         int n = rand.nextInt(10);
         if (n % 3 == 0) {
-            return new BloodProp(x, y, speedX, speedY);
+            propFactory  =new BloodPropFactory();
+            abstractProp = propFactory.creatProp(x, y, speedX, speedY);
         } else if (n % 3 == 1) {
-            return new BulletProp(x, y, speedX, speedY);
+            propFactory  =new BulletPropFactory();
+            abstractProp = propFactory.creatProp(x, y, speedX, speedY);
         } else {
-            return new BombProp(x, y, speedX, speedY);
+            propFactory  =new BombPropFactory();
+            abstractProp = propFactory.creatProp(x, y, speedX, speedY);
         }
+        return abstractProp;
     }
 }

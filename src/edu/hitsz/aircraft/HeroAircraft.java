@@ -1,5 +1,7 @@
 package edu.hitsz.aircraft;
 
+import edu.hitsz.application.ImageManager;
+import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.HeroBullet;
 
@@ -29,6 +31,7 @@ public class HeroAircraft extends AbstractAircraft {
      * 子弹射击方向 (向上发射：1，向下发射：-1)
      */
     private int direction = -1;
+    private static HeroAircraft heroAircraft = null;
 
     /**
      * @param locationX 英雄机位置x坐标
@@ -37,8 +40,20 @@ public class HeroAircraft extends AbstractAircraft {
      * @param speedY 英雄机射出的子弹的基准速度（英雄机无特定速度）
      * @param hp    初始生命值
      */
-    public HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp) {
+    private HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp) {
         super(locationX, locationY, speedX, speedY, hp);
+    }
+
+    public static HeroAircraft getInstance() {
+        int locationX = Main.WINDOW_WIDTH / 2;
+        int locationY = Main.WINDOW_HEIGHT - ImageManager.HERO_IMAGE.getHeight();
+        int speedX = 0;
+        int speedY = 0;
+        int hp = 1000;
+        if (heroAircraft == null) {
+            heroAircraft = new HeroAircraft(locationX, locationY, speedX, speedY, hp);
+        }
+        return heroAircraft;
     }
 
     public void increaseHp() {

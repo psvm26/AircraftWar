@@ -1,5 +1,6 @@
 package edu.hitsz.prop;
 
+import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.application.Main;
 import edu.hitsz.basic.AbstractFlyingObject;
 
@@ -18,6 +19,6 @@ public class AbstractProp extends AbstractFlyingObject {
         }
     }
 
-    public void func() {}
+    public void func(HeroAircraft heroAircraft) {}
 
 }

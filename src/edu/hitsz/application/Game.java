@@ -70,10 +70,7 @@ public class Game extends JPanel {
     private boolean gameOverFlag = false;
 
     public Game() {
-        heroAircraft = new HeroAircraft(
-                Main.WINDOW_WIDTH / 2,
-                Main.WINDOW_HEIGHT - ImageManager.HERO_IMAGE.getHeight() ,
-                0, 0, 100);
+        heroAircraft = HeroAircraft.getInstance();
 
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
@@ -194,11 +191,11 @@ public class Game extends JPanel {
                         // TODO 获得分数，产生道具补给
                         score += 10;
                         if(enemyAircraft instanceof EliteEnemy) {
+                            score += 20;
 //                            System.out.println("Crash Elite!");
                             Random rand = new Random();
-//                            int r = rand.nextInt(10);
-                            int r = 0;
-                            if (r % 10 == 0) {
+                            int r = rand.nextInt(10);
+                            if (r < 9) {
                                 Props.add(((EliteEnemy) enemyAircraft).produceprop());
                             }
                         }
@@ -220,16 +217,7 @@ public class Game extends JPanel {
             else if (prop.crash(heroAircraft)) {
                 prop.vanish();
                 if (prop.notValid()){
-                    prop.func();
-                    if (prop instanceof BloodProp) {
-                        heroAircraft.increaseHp();
-                    } else if (prop instanceof BombProp) {
-                        enemyAircrafts.clear();
-                        enemyBullets.clear();
-                    } else if (prop instanceof BulletProp) {
-                        heroAircraft.setShootNum(3);
-                        now = time;
-                    }
+                    prop.func(heroAircraft);
                 }
             }
         }
@@ -326,25 +314,17 @@ public class Game extends JPanel {
             System.out.println(time);
             // 新敌机产生
 
-            Random rand = new Random();
+
             if (enemyAircrafts.size() < enemyMaxNumber) {
+                EnemyFactory enemyFactory;
+                Random rand = new Random();
                 int r = rand.nextInt(10);
                 if (r % 2 == 0) {
-                    enemyAircrafts.add(new MobEnemy(
-                            (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
-                            (int) (Math.random() * Main.WINDOW_HEIGHT * 0.05),
-                            0,
-                            10,
-                            30
-                    ));
+                    enemyFactory = new MobEnemyFactory();
+                    enemyAircrafts.add(enemyFactory.creatEnemy());
                 } else {
-                    enemyAircrafts.add(new EliteEnemy(
-                            (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
-                            (int) (Math.random() * Main.WINDOW_HEIGHT * 0.05),
-                            5 * (r < 5?1:-1),
-                            10,
-                            60
-                    ));
+                    enemyFactory = new EliteEnemyFactory();
+                    enemyAircrafts.add(enemyFactory.creatEnemy());
                 }
             }
             // 飞机射出子弹
