@@ -51,7 +51,8 @@ public class Game extends JPanel {
      * 当前得分
      */
     private int score = 0;
-    private int bossScore = 100;
+    private int bossScore = 50;
+    private boolean postBoss = false;
     /**
      * 当前时刻
      */
@@ -237,6 +238,8 @@ public class Game extends JPanel {
         heroBullets.removeIf(AbstractFlyingObject::notValid);
         enemyAircrafts.removeIf(AbstractFlyingObject::notValid);
         Props.removeIf(AbstractFlyingObject::notValid);
+        if(!enemyAircrafts.contains(bossEnemy) && postBoss) {bossScore = score + 100;}
+        postBoss = enemyAircrafts.contains(bossEnemy);
     }
 
 
@@ -315,9 +318,9 @@ public class Game extends JPanel {
                 EnemyFactory enemyFactory;
                 Random rand = new Random();
                 int r = rand.nextInt(10);
-                if (r % 3 == 0) {
+                if (r < 6) {
                     enemyFactory = new MobEnemyFactory();
-                } else if(r % 3 == 1){
+                } else if(r <9){
                     enemyFactory = new EliteEnemyFactory();
                 }else {
                     enemyFactory = new ElitePlusEnemyFactory();
@@ -329,7 +332,7 @@ public class Game extends JPanel {
                 EnemyFactory enemyFactory = new BossEnemyFactory();
                 bossEnemy = enemyFactory.creatEnemy();
                 enemyAircrafts.add(bossEnemy);
-                bossScore += 500;
+                System.out.println(bossScore);
             }
             // 飞机射出子弹
             shootAction();
