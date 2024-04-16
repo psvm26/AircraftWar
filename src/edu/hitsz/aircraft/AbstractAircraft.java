@@ -2,6 +2,7 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
+import edu.hitsz.prop.AbstractProp;
 
 import java.util.List;
 
@@ -17,11 +18,15 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
      */
     protected int maxHp;
     protected int hp;
+    private int score;
+    private int shootFreq;
 
-    public AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp) {
+    public AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp, int score,int shootFreq) {
         super(locationX, locationY, speedX, speedY);
         this.hp = hp;
         this.maxHp = hp;
+        this.score = score;
+        this.shootFreq = shootFreq;
     }
 
     public void decreaseHp(int decrease){
@@ -35,6 +40,12 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
     public int getHp() {
         return hp;
     }
+    public int getScore() {
+        return score;
+    }
+    public int getShootFreq(){
+        return shootFreq;
+    }
 
 
     /**
@@ -44,6 +55,7 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
      *  非可射击对象空实现，返回null
      */
     public abstract List<BaseBullet> shoot();
+    public abstract List<AbstractProp> produceprop();
 
 }
 

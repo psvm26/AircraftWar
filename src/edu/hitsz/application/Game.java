@@ -36,6 +36,7 @@ public class Game extends JPanel {
     private int timeInterval = 40;
 
     private final HeroAircraft heroAircraft;
+    private AbstractAircraft bossEnemy;
     private final List<AbstractAircraft> enemyAircrafts;
     private final List<BaseBullet> heroBullets;
     private final List<BaseBullet> enemyBullets;
@@ -50,12 +51,11 @@ public class Game extends JPanel {
      * 当前得分
      */
     private int score = 0;
+    private int bossScore = 100;
     /**
      * 当前时刻
      */
     private int time = 0;
-    private int now = 0;
-    private int continue_time = 10;
 
     /**
      * 周期（ms)
@@ -71,6 +71,7 @@ public class Game extends JPanel {
 
     public Game() {
         heroAircraft = HeroAircraft.getInstance();
+        bossEnemy = null;
 
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
@@ -124,11 +125,15 @@ public class Game extends JPanel {
     private void shootAction() {
         // TODO 敌机射击
         for (AbstractAircraft enemyAircraft : enemyAircrafts) {
-            enemyBullets.addAll(enemyAircraft.shoot());
+            if(time % enemyAircraft.getShootFreq() == 0){
+                enemyBullets.addAll(enemyAircraft.shoot());
+            }
         }
 
         // 英雄射击
-        heroBullets.addAll(heroAircraft.shoot());
+        if(time % heroAircraft.getShootFreq() == 0){
+            heroBullets.addAll(heroAircraft.shoot());
+        }
     }
 
     private void bulletsMoveAction() {
@@ -189,15 +194,11 @@ public class Game extends JPanel {
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
                         // TODO 获得分数，产生道具补给
-                        score += 10;
-                        if(enemyAircraft instanceof EliteEnemy) {
-                            score += 20;
-//                            System.out.println("Crash Elite!");
-                            Random rand = new Random();
-                            int r = rand.nextInt(10);
-                            if (r < 9) {
-                                Props.add(((EliteEnemy) enemyAircraft).produceprop());
-                            }
+                        score += enemyAircraft.getScore();
+                        Random rand = new Random();
+                        int r = rand.nextInt(10);
+                        if (r < 9) {
+                            Props.addAll(enemyAircraft.produceprop());
                         }
                     }
                 }
@@ -236,9 +237,6 @@ public class Game extends JPanel {
         heroBullets.removeIf(AbstractFlyingObject::notValid);
         enemyAircrafts.removeIf(AbstractFlyingObject::notValid);
         Props.removeIf(AbstractFlyingObject::notValid);
-        //子弹道具持续一段时间
-        if (time - now >= 600 * continue_time && heroAircraft.getShootNum() == 3) {
-            heroAircraft.setShootNum(1);}
     }
 
 
@@ -313,19 +311,25 @@ public class Game extends JPanel {
         if (timeCountAndNewCycleJudge()) {
             System.out.println(time);
             // 新敌机产生
-
-
             if (enemyAircrafts.size() < enemyMaxNumber) {
                 EnemyFactory enemyFactory;
                 Random rand = new Random();
                 int r = rand.nextInt(10);
-                if (r % 2 == 0) {
+                if (r % 3 == 0) {
                     enemyFactory = new MobEnemyFactory();
-                    enemyAircrafts.add(enemyFactory.creatEnemy());
-                } else {
+                } else if(r % 3 == 1){
                     enemyFactory = new EliteEnemyFactory();
-                    enemyAircrafts.add(enemyFactory.creatEnemy());
+                }else {
+                    enemyFactory = new ElitePlusEnemyFactory();
                 }
+                enemyAircrafts.add(enemyFactory.creatEnemy());
+            }
+            //boss机产生
+            if(score > bossScore && !enemyAircrafts.contains(bossEnemy)){
+                EnemyFactory enemyFactory = new BossEnemyFactory();
+                bossEnemy = enemyFactory.creatEnemy();
+                enemyAircrafts.add(bossEnemy);
+                bossScore += 500;
             }
             // 飞机射出子弹
             shootAction();

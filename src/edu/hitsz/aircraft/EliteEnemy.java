@@ -27,9 +27,10 @@ public class EliteEnemy extends AbstractAircraft{
      * 子弹射击方向 (向上发射：1，向下发射：-1)
      */
     private int direction = -1;
+    private int propNum = 1;
 
-    public EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp) {
-        super(locationX, locationY, speedX, speedY, hp);
+    public EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp, int score, int shootFreq) {
+        super(locationX, locationY, speedX, speedY, hp, score, shootFreq);
     }
 
     public void forward(){
@@ -57,25 +58,27 @@ public class EliteEnemy extends AbstractAircraft{
         return res;
     }
 
-    public AbstractProp produceprop() {
+    public List<AbstractProp> produceprop() {
         int x = this.locationX;
         int y = this.locationY;
         int speedX = 0;
         int speedY = this.speedY / 2;
         AbstractProp abstractProp;
+        List<AbstractProp> Props = new LinkedList<>();
         PropFactory propFactory;
         Random rand = new Random();
-        int n = rand.nextInt(10);
-        if (n % 3 == 0) {
-            propFactory  =new BloodPropFactory();
+        for(int i = 0;i < this.propNum; i++) {
+            int n = rand.nextInt(10);
+            if (n % 3 == 0) {
+                propFactory  =new BloodPropFactory();
+            } else if (n % 3 == 1) {
+                propFactory  =new BulletPropFactory();
+            } else {
+                propFactory  =new BombPropFactory();
+            }
             abstractProp = propFactory.creatProp(x, y, speedX, speedY);
-        } else if (n % 3 == 1) {
-            propFactory  =new BulletPropFactory();
-            abstractProp = propFactory.creatProp(x, y, speedX, speedY);
-        } else {
-            propFactory  =new BombPropFactory();
-            abstractProp = propFactory.creatProp(x, y, speedX, speedY);
+            Props.add(abstractProp);
         }
-        return abstractProp;
+        return Props;
     }
 }

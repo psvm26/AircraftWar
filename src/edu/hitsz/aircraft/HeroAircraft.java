@@ -4,6 +4,7 @@ import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.HeroBullet;
+import edu.hitsz.prop.AbstractProp;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,8 +41,8 @@ public class HeroAircraft extends AbstractAircraft {
      * @param speedY 英雄机射出的子弹的基准速度（英雄机无特定速度）
      * @param hp    初始生命值
      */
-    private HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp) {
-        super(locationX, locationY, speedX, speedY, hp);
+    private HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp, int score, int shootFreq) {
+        super(locationX, locationY, speedX, speedY, hp, score, shootFreq);
     }
 
     public static HeroAircraft getInstance() {
@@ -50,16 +51,17 @@ public class HeroAircraft extends AbstractAircraft {
         int speedX = 0;
         int speedY = 0;
         int hp = 1000;
+        int score = 0;
+        int shootFreq = 600;
         if (heroAircraft == null) {
-            heroAircraft = new HeroAircraft(locationX, locationY, speedX, speedY, hp);
+            heroAircraft = new HeroAircraft(locationX, locationY, speedX, speedY, hp, score, shootFreq);
         }
         return heroAircraft;
     }
 
-    public void increaseHp() {
-        Random rand = new Random();
+    public void increaseHp(int increase_hp) {
         int minus = super.maxHp - this.hp;
-        int increase = minus == 0?0 : rand.nextInt(minus);
+        int increase = Math.min(minus, increase_hp);
         System.out.println("Add "+ increase + " Hp.");
         this.hp += increase;
     }
@@ -70,6 +72,13 @@ public class HeroAircraft extends AbstractAircraft {
 
     public int getShootNum() {
         return shootNum;
+    }
+
+    public int getHp(){return this.hp;}
+
+    @Override
+    public List<AbstractProp> produceprop() {
+        return null;
     }
 
     @Override

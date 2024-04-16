@@ -15,6 +15,8 @@ public class EliteEnemyFactory implements EnemyFactory{
         int speedX = 5 * (r < 5? 1 : -1);
         int speedY = 10;
         int hp = 60;
-        return new EliteEnemy(locationX, locationY, speedX, speedY, hp);
+        int score = 30;
+        int shootFreq = 1200;
+        return new EliteEnemy(locationX, locationY, speedX, speedY, hp, score, shootFreq);
     }
 }

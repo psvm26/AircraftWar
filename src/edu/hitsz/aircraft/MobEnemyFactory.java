@@ -11,6 +11,8 @@ public class MobEnemyFactory implements EnemyFactory{
         int speedX = 0;
         int speedY = 10;
         int hp = 30;
-        return new MobEnemy(locationX, locationY, speedX, speedY, hp);
+        int score = 10;
+        int shootFreq = 600;
+        return new MobEnemy(locationX, locationY, speedX, speedY, hp, score, shootFreq);
     }
 }

@@ -11,6 +11,6 @@ public class BloodProp extends AbstractProp {
     public void func(HeroAircraft heroAircraft) {
         super.func(heroAircraft);
         System.out.println("Add hp!");
-        heroAircraft.increaseHp();
+        heroAircraft.increaseHp(30);
     }
 }
