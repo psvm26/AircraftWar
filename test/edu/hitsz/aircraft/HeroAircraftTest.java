@@ -32,12 +32,13 @@ class HeroAircraftTest {
     }
 
     @ParameterizedTest
-    @DisplayName("Test getShootNum Method")
-    @CsvSource({"1", "2", "3"})
-    void getShootNum(int i){
-        heroAircraft.setShootNum(i);
-        int j = heroAircraft.getShootNum();
-        assertEquals(i,j);
+    @DisplayName("Test decreaseHp Method")
+    @CsvSource({"100", "200", "800"})
+    void decreaseHp(int i){
+        int pre_hp = heroAircraft.getHp();
+        heroAircraft.decreaseHp(i);
+        int j = heroAircraft.getHp();
+        assertEquals(Math.max(pre_hp-i, 0),j);
     }
 
     @ParameterizedTest
@@ -56,5 +57,6 @@ class HeroAircraftTest {
         heroAircraft.setShootNum(i);
         List<BaseBullet> res = heroAircraft.shoot();
         assertEquals(i, res.size());
+        assertInstanceOf(BaseBullet.class, res.get(0));
     }
 }

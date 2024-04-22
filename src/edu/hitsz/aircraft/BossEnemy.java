@@ -40,15 +40,15 @@ public class BossEnemy extends AbstractAircraft{
         List<BaseBullet> res = new LinkedList<>();
         int x = this.getLocationX();
         int y = this.getLocationY() - direction*40;
-        int speedX = 0;
-        int speedY = this.getSpeedY() - direction*5;
         double l = Main.WINDOW_WIDTH * 0.3;
+        double speed_l = 10;
         BaseBullet bullet;
         for(int i=0; i<shootNum; i++){
             // 子弹发射位置相对飞机位置向前偏移
             // 多个子弹横向分散
             double theta = (i-10) * Math.PI / 10;
-            bullet = new EnemyBullet((int) (x + l*Math.sin(theta)), (int)(y + l*Math.cos(theta)), speedX, speedY, power);
+            bullet = new EnemyBullet((int)(x + l*Math.sin(theta)), (int)(y + l*Math.cos(theta)),
+                    (int)(speed_l*Math.sin(theta)) + this.speedX, (int)(speed_l*Math.cos(theta)) + this.speedY, power);
             res.add(bullet);
         }
         return res;
