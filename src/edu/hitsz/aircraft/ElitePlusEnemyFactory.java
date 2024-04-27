@@ -2,6 +2,8 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
+import edu.hitsz.shoot.ScatterShootStrategy;
+import edu.hitsz.shoot.ShootStrategy;
 
 import java.util.Random;
 
@@ -17,6 +19,11 @@ public class ElitePlusEnemyFactory implements EnemyFactory{
         int hp = 90;
         int score = 50;
         int shootFreq = 1200;
-        return new ElitePlusEnemy(locationX, locationY, speedX, speedY, hp, score, shootFreq);
+        int shootNum = 3;
+        int power = 30;
+        int direction = -1;
+        ShootStrategy shootStrategy = new ScatterShootStrategy();
+        return new ElitePlusEnemy(locationX, locationY, speedX, speedY, hp, score,
+                shootFreq, shootNum, power, direction, shootStrategy);
     }
 }

@@ -2,6 +2,8 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
+import edu.hitsz.shoot.LoopShootStrategy;
+import edu.hitsz.shoot.ShootStrategy;
 
 import java.util.Random;
 
@@ -17,6 +19,11 @@ public class BossEnemyFactory implements EnemyFactory{
         int hp = 120;
         int score = 100;
         int shootFreq = 2400;
-        return new BossEnemy(locationX, locationY, speedX, speedY, hp, score, shootFreq);
+        int shootNum = 20;
+        int power = 30;
+        int direction = -1;
+        ShootStrategy shootStrategy = new LoopShootStrategy();
+        return new BossEnemy(locationX, locationY, speedX, speedY, hp, score,
+                shootFreq, shootNum, power, direction,shootStrategy);
     }
 }

@@ -2,6 +2,11 @@ package edu.hitsz.aircraft;
 
 import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
+import edu.hitsz.shoot.ScatterShootStrategy;
+import edu.hitsz.shoot.ShootStrategy;
+import edu.hitsz.shoot.StraightShootStrategy;
+
+import java.util.LinkedList;
 
 public class MobEnemyFactory implements EnemyFactory{
     @Override
@@ -13,6 +18,11 @@ public class MobEnemyFactory implements EnemyFactory{
         int hp = 30;
         int score = 10;
         int shootFreq = 600;
-        return new MobEnemy(locationX, locationY, speedX, speedY, hp, score, shootFreq);
+        int shootNum = 0;
+        int power = 0;
+        int direction = -1;
+        ShootStrategy shootStrategy = new StraightShootStrategy();
+        return new MobEnemy(locationX, locationY, speedX, speedY, hp, score,
+                shootFreq, shootNum, power, direction, shootStrategy);
     }
 }

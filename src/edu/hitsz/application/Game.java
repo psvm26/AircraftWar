@@ -1,5 +1,6 @@
 package edu.hitsz.application;
 
+import edu.hitsz.dao.PlayerDaoImpl;
 import edu.hitsz.prop.AbstractProp;
 import edu.hitsz.prop.BloodProp;
 import edu.hitsz.aircraft.*;
@@ -361,6 +362,8 @@ public class Game extends JPanel {
             // 游戏结束
             executorService.shutdown();
             gameOverFlag = true;
+            PlayerDaoImpl playerDaoImpl = new PlayerDaoImpl();
+            playerDaoImpl.printRankList("zrj", score);
             System.out.println("Game Over!");
         }
 

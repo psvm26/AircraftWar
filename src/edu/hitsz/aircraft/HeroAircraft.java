@@ -5,6 +5,8 @@ import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.HeroBullet;
 import edu.hitsz.prop.AbstractProp;
+import edu.hitsz.shoot.ShootStrategy;
+import edu.hitsz.shoot.StraightShootStrategy;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -15,23 +17,6 @@ import java.util.Random;
  * @author hitsz
  */
 public class HeroAircraft extends AbstractAircraft {
-
-    /**攻击方式 */
-
-    /**
-     * 子弹一次发射数量
-     */
-    private int shootNum = 1;
-
-    /**
-     * 子弹伤害
-     */
-    private int power = 30;
-
-    /**
-     * 子弹射击方向 (向上发射：1，向下发射：-1)
-     */
-    private int direction = -1;
     private static HeroAircraft heroAircraft = null;
 
     /**
@@ -41,8 +26,9 @@ public class HeroAircraft extends AbstractAircraft {
      * @param speedY 英雄机射出的子弹的基准速度（英雄机无特定速度）
      * @param hp    初始生命值
      */
-    private HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp, int score, int shootFreq) {
-        super(locationX, locationY, speedX, speedY, hp, score, shootFreq);
+    public HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp, int score, int shootFreq,
+                     int shootNum, int power, int direction, ShootStrategy shootStrage) {
+        super(locationX, locationY, speedX, speedY, hp, score, shootFreq, shootNum, power, direction, shootStrage);
     }
 
     public static HeroAircraft getInstance() {
@@ -53,8 +39,12 @@ public class HeroAircraft extends AbstractAircraft {
         int hp = 1000;
         int score = 0;
         int shootFreq = 600;
+        int shootNum = 1;
+        int power = 30;
+        int direction = 1;
+        ShootStrategy shootStrategy = new StraightShootStrategy();
         if (heroAircraft == null) {
-            heroAircraft = new HeroAircraft(locationX, locationY, speedX, speedY, hp, score, shootFreq);
+            heroAircraft = new HeroAircraft(locationX, locationY, speedX, speedY, hp, score, shootFreq, shootNum, power, direction, shootStrategy);
         }
         return heroAircraft;
     }
@@ -64,14 +54,6 @@ public class HeroAircraft extends AbstractAircraft {
         int increase = Math.min(minus, increase_hp);
         System.out.println("Add "+ increase + " Hp.");
         this.hp += increase;
-    }
-
-    public void setShootNum(int shootNum) {
-        this.shootNum = shootNum;
-    }
-
-    public int getShootNum() {
-        return shootNum;
     }
 
     public int getHp(){return this.hp;}
@@ -86,25 +68,23 @@ public class HeroAircraft extends AbstractAircraft {
         // 英雄机由鼠标控制，不通过forward函数移动
     }
 
-    @Override
     /**
      * 通过射击产生子弹
      * @return 射击出的子弹List
      */
-    public List<BaseBullet> shoot() {
-        List<BaseBullet> res = new LinkedList<>();
-        int x = this.getLocationX();
-        int y = this.getLocationY() + direction*2;
-        int speedX = 0;
-        int speedY = this.getSpeedY() + direction*5;
-        BaseBullet bullet;
-        for(int i=0; i<shootNum; i++){
-            // 子弹发射位置相对飞机位置向前偏移
-            // 多个子弹横向分散
-            bullet = new HeroBullet(x + (i*2 - shootNum + 1)*10, y, speedX, speedY, power);
-            res.add(bullet);
-        }
-        return res;
-    }
+//    public List<BaseBullet> shoot() {
+//        int x = this.getLocationX();
+//        int y = this.getLocationY() + direction*2;
+//        int speedX = 0;
+//        int speedY = this.getSpeedY() + direction*5;
+//        BaseBullet bullet;
+//        for(int i=0; i<shootNum; i++){
+//            // 子弹发射位置相对飞机位置向前偏移
+//            // 多个子弹横向分散
+//            bullet = new HeroBullet(x + (i*2 - shootNum + 1)*10, y, speedX, speedY, power);
+//            res.add(bullet);
+//        }
+//        return res;
+//    }
 
 }
