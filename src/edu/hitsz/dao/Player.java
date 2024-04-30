@@ -1,18 +1,15 @@
 package edu.hitsz.dao;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 public class Player {
     private String playerName;
     private int playId;
-    private int PlayScore;
+    private int playScore;
     private String playTime;
 
     public Player(String playerName, int playId, int playScore, String playTime) {
         this.playerName = playerName;
         this.playId = playId;
-        PlayScore = playScore;
+        this.playScore = playScore;
         this.playTime = playTime;
     }
 
@@ -33,11 +30,11 @@ public class Player {
     }
 
     public int getPlayScore() {
-        return PlayScore;
+        return playScore;
     }
 
     public void setPlayScore(int playScore) {
-        PlayScore = playScore;
+        this.playScore = playScore;
     }
 
     public String getPlayTime() {

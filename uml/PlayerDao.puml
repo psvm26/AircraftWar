@@ -1,0 +1,51 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Game {
+}
+
+class Player {
+    - playerName: String
+    - playId: int
+    - playScore: int
+    - playTime: String
+    + Player(String playerName, int playId, int playScore, String playTime)
+    + getPlayerName(): String
+    + getPlayId(): int
+    + getPlayScore(): int
+    + getPlayTime(): String
+    + setPlayerName(String playerName): void
+    + setPlayId(int playId): void
+    + setPlayScore(int playScore): void
+    + setPlayTime(String playTime): void
+}
+
+interface PlayerDao {
+    + {abstract} findById(int PlayerId): void
+    + {abstract} getAllPlayer(): List<Player>
+    + {abstract} doAdd(Player player): void
+    + {abstract} getMaxId(): int
+    + {abstract} sortPlayers(): void
+    + {abstract} store(): void
+    + {abstract} load(): void
+    + {abstract} printRankList(String playerName, int score): void
+}
+
+class PlayerDaoImpl {
+    - players: List<Player>
+    + PlayerDaoImpl(): void
+    + findById(int PlayerId): void
+        + getAllPlayer(): List<Player>
+        + doAdd(Player player): void
+        + getMaxId(): int
+        + sortPlayers(): void
+        + store(): void
+        + load(): void
+        + printRankList(String playerName, int score): void
+}
+PlayerDaoImpl --> Player
+PlayerDaoImpl ..|> PlayerDao
+Game ..> PlayerDao
+
+
+@enduml
