@@ -1,6 +1,8 @@
 package edu.hitsz.application;
 
 import edu.hitsz.dao.PlayerDaoImpl;
+import edu.hitsz.page.RankList;
+import edu.hitsz.page.mainPage;
 import edu.hitsz.prop.AbstractProp;
 import edu.hitsz.prop.BloodProp;
 import edu.hitsz.aircraft.*;
@@ -9,6 +11,7 @@ import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.prop.BombProp;
 import edu.hitsz.prop.BulletProp;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import edu.hitsz.page.mainPage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -65,13 +68,15 @@ public class Game extends JPanel {
      */
     private int cycleDuration = 600;
     private int cycleTime = 0;
+    private int difficulty;
 
     /**
      * 游戏结束标志
      */
     private boolean gameOverFlag = false;
 
-    public Game() {
+    public Game(int difficulty) {
+        this.difficulty = difficulty;
         heroAircraft = HeroAircraft.getInstance();
         bossEnemy = null;
 
@@ -257,10 +262,17 @@ public class Game extends JPanel {
     @Override
     public void paint(Graphics g) {
         super.paint(g);
-
+        Image img = null;
+        if(this.difficulty == 1) {
+            img = ImageManager.BACKGROUND_IMAGE1;
+        } else if (this.difficulty == 2) {
+            img = ImageManager.BACKGROUND_IMAGE2;
+        } else {
+            img = ImageManager.BACKGROUND_IMAGE3;
+        }
         // 绘制背景,图片滚动
-        g.drawImage(ImageManager.BACKGROUND_IMAGE, 0, this.backGroundTop - Main.WINDOW_HEIGHT, null);
-        g.drawImage(ImageManager.BACKGROUND_IMAGE, 0, this.backGroundTop, null);
+        g.drawImage(img, 0, this.backGroundTop - Main.WINDOW_HEIGHT, null);
+        g.drawImage(img, 0, this.backGroundTop, null);
         this.backGroundTop += 1;
         if (this.backGroundTop == Main.WINDOW_HEIGHT) {
             this.backGroundTop = 0;
@@ -362,9 +374,14 @@ public class Game extends JPanel {
             // 游戏结束
             executorService.shutdown();
             gameOverFlag = true;
-            PlayerDaoImpl playerDaoImpl = new PlayerDaoImpl();
-            playerDaoImpl.printRankList("zrj", score);
+            PlayerDaoImpl playerDaoImpl = new PlayerDaoImpl(difficulty);
+//            playerDaoImpl.printRankList("zrj", score);
+            playerDaoImpl.addList("zrj", score);
+            mainPage.cardPanel.add(new RankList(playerDaoImpl).getMainRankList());
+            mainPage.cardLayout.last(mainPage.cardPanel);
+            playerDaoImpl.store();
             System.out.println("Game Over!");
+            HeroAircraft.heroToNull();
         }
 
     }

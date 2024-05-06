@@ -68,6 +68,10 @@ public class HeroAircraft extends AbstractAircraft {
         // 英雄机由鼠标控制，不通过forward函数移动
     }
 
+    public static void heroToNull() {
+        heroAircraft = null;
+    }
+
     /**
      * 通过射击产生子弹
      * @return 射击出的子弹List
