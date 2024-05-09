@@ -1,5 +1,6 @@
 package edu.hitsz.page;
 
+import edu.hitsz.application.Main;
 import edu.hitsz.dao.PlayerDaoImpl;
 
 import javax.swing.*;
@@ -16,18 +17,23 @@ public class RankList {
     private JPanel bottomPanel;
     private JButton deleteButton;
     private JButton returnButton;
+    private JLabel difficultyLabel;
+    private DefaultTableModel model;
 
     public RankList(PlayerDaoImpl playerDaoImpl) {
-        String[] columnName = {"排名","昵称","分数","时间"};
-        String[][] tableData = playerDaoImpl.listToStringArray();
+        switch (playerDaoImpl.getDifficulty()) {
+            case 1:
+                difficultyLabel.setText("难度：简单");break;
+            case 2:
+                difficultyLabel.setText("难度：普通");break;
+            case 3:
+                difficultyLabel.setText("难度：困难");break;
+            default:
+                difficultyLabel.setText("难度：未知");
+        }
 
         //表格模型
-        DefaultTableModel model = new DefaultTableModel(tableData, columnName){
-            @Override
-            public boolean isCellEditable(int row, int col){
-                return false;
-            }
-        };
+        model = playerDaoImpl.listToModel();
 
         //JTable并不存储自己的数据，而是从表格模型那里获取它的数据
         rankTable.setModel(model);
@@ -36,12 +42,16 @@ public class RankList {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int row = rankTable.getSelectedRow();
-                System.out.println(row);
+//                System.out.println(row);
                 int result = JOptionPane.showConfirmDialog(deleteButton,
                         "是否确定中删除？");
                 if (JOptionPane.YES_OPTION == result && row != -1) {
                     model.removeRow(row);
                     playerDaoImpl.deleteByRank(row);
+                    playerDaoImpl.sortPlayers();
+                    model = playerDaoImpl.listToModel();
+                    rankTable.setModel(model);
+                    rankScrollPanel.setViewportView(rankTable);
                     playerDaoImpl.store();
                 }
             }
@@ -49,7 +59,7 @@ public class RankList {
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                mainPage.cardLayout.first(mainPage.cardPanel);
+                Main.cardLayout.first(Main.cardPanel);
             }
         });
     }

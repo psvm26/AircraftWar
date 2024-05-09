@@ -1,17 +1,13 @@
 package edu.hitsz.application;
 
 import edu.hitsz.dao.PlayerDaoImpl;
+import edu.hitsz.music.MusicThread;
 import edu.hitsz.page.RankList;
-import edu.hitsz.page.mainPage;
 import edu.hitsz.prop.AbstractProp;
-import edu.hitsz.prop.BloodProp;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
-import edu.hitsz.prop.BombProp;
-import edu.hitsz.prop.BulletProp;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
-import edu.hitsz.page.mainPage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -69,14 +65,19 @@ public class Game extends JPanel {
     private int cycleDuration = 600;
     private int cycleTime = 0;
     private int difficulty;
+    private boolean soundChoice;
 
     /**
      * 游戏结束标志
      */
     private boolean gameOverFlag = false;
+    //music
+    private MusicThread bgmTread = null;
+    private MusicThread bossBgmTread = null;
 
-    public Game(int difficulty) {
+    public Game(int difficulty,boolean soundChoice) {
         this.difficulty = difficulty;
+        this.soundChoice = soundChoice;
         heroAircraft = HeroAircraft.getInstance();
         bossEnemy = null;
 
@@ -103,6 +104,9 @@ public class Game extends JPanel {
      */
     public void action() {
 
+            bgmTread = new MusicThread("src/videos/bgm.wav", soundChoice);
+            bgmTread.setLoop(true);
+            bgmTread.start();
         // 定时任务：绘制、对象产生、碰撞判定、击毁及结束判定
         Runnable task = this::run;
 
@@ -197,6 +201,7 @@ public class Game extends JPanel {
                 if (enemyAircraft.crash(bullet)) {
                     // 敌机撞击到英雄机子弹
                     // 敌机损失一定生命值
+                    (new MusicThread("src/videos/bullet_hit.wav", soundChoice)).start();
                     enemyAircraft.decreaseHp(bullet.getPower());
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
@@ -225,6 +230,7 @@ public class Game extends JPanel {
             else if (prop.crash(heroAircraft)) {
                 prop.vanish();
                 if (prop.notValid()){
+                    (new MusicThread("src/videos/get_supply.wav", soundChoice)).start();
                     prop.func(heroAircraft);
                 }
             }
@@ -244,7 +250,10 @@ public class Game extends JPanel {
         heroBullets.removeIf(AbstractFlyingObject::notValid);
         enemyAircrafts.removeIf(AbstractFlyingObject::notValid);
         Props.removeIf(AbstractFlyingObject::notValid);
-        if(!enemyAircrafts.contains(bossEnemy) && postBoss) {bossScore = score + 100;}
+        if(!enemyAircrafts.contains(bossEnemy) && postBoss) {
+            bossBgmTread.stopMusic();
+            bossScore = score + 100;
+        }
         postBoss = enemyAircrafts.contains(bossEnemy);
     }
 
@@ -345,7 +354,9 @@ public class Game extends JPanel {
                 EnemyFactory enemyFactory = new BossEnemyFactory();
                 bossEnemy = enemyFactory.creatEnemy();
                 enemyAircrafts.add(bossEnemy);
-                System.out.println(bossScore);
+                bossBgmTread = new MusicThread("src/videos/bgm_boss.wav", soundChoice);
+                bossBgmTread.setLoop(true);
+                bossBgmTread.start();
             }
             // 飞机射出子弹
             shootAction();
@@ -372,13 +383,22 @@ public class Game extends JPanel {
         // 游戏结束检查英雄机是否存活
         if (heroAircraft.getHp() <= 0) {
             // 游戏结束
-            executorService.shutdown();
             gameOverFlag = true;
+            (new MusicThread("src/videos/game_over.wav", soundChoice)).start();
+            bgmTread.stopMusic();
+            if(bossBgmTread != null) {
+                bossBgmTread.stopMusic();
+            }
+            String playerName = JOptionPane.showInputDialog(null,"请输入你的用户名：","输入",JOptionPane.WARNING_MESSAGE);
+            while(Objects.equals(playerName, "")) {
+                playerName = JOptionPane.showInputDialog(null,"输入为空！请输入你的用户名：","输入",JOptionPane.WARNING_MESSAGE);
+            }
+            executorService.shutdown();
             PlayerDaoImpl playerDaoImpl = new PlayerDaoImpl(difficulty);
 //            playerDaoImpl.printRankList("zrj", score);
-            playerDaoImpl.addList("zrj", score);
-            mainPage.cardPanel.add(new RankList(playerDaoImpl).getMainRankList());
-            mainPage.cardLayout.last(mainPage.cardPanel);
+            playerDaoImpl.addList(playerName, score);
+            Main.cardPanel.add(new RankList(playerDaoImpl).getMainRankList());
+            Main.cardLayout.last(Main.cardPanel);
             playerDaoImpl.store();
             System.out.println("Game Over!");
             HeroAircraft.heroToNull();

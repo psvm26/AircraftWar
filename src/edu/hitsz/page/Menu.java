@@ -1,9 +1,9 @@
 package edu.hitsz.page;
 
 import edu.hitsz.application.Game;
+import edu.hitsz.application.Main;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,35 +12,40 @@ public class Menu {
     private JButton Button1;
     private JButton Button2;
     private JButton Button3;
-    private JComboBox comboBox1;
+    private JComboBox musicChoice;
     private JPanel difficulty;
     private JPanel sound;
+    private boolean soundChoice = false;
 
     public Menu() {
         Button1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game game = new Game(1);
-                mainPage.cardPanel.add(game);
-                mainPage.cardLayout.last(mainPage.cardPanel);
+                soundChoice = musicChoice.getSelectedIndex() == 0;
+//                System.out.println(soundChoice);
+                Game game = new Game(1, soundChoice);
+                Main.cardPanel.add(game);
+                Main.cardLayout.last(Main.cardPanel);
                 game.action();
             }
         });
         Button2.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game game = new Game(2);
-                mainPage.cardPanel.add(game);
-                mainPage.cardLayout.last(mainPage.cardPanel);
+                soundChoice = musicChoice.getSelectedIndex() == 0;
+                Game game = new Game(2, soundChoice);
+                Main.cardPanel.add(game);
+                Main.cardLayout.last(Main.cardPanel);
                 game.action();
             }
         });
         Button3.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Game game = new Game(3);
-                mainPage.cardPanel.add(game);
-                mainPage.cardLayout.last(mainPage.cardPanel);
+                soundChoice = musicChoice.getSelectedIndex() == 0;
+                Game game = new Game(3, soundChoice);
+                Main.cardPanel.add(game);
+                Main.cardLayout.last(Main.cardPanel);
                 game.action();
             }
         });

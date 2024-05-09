@@ -2,6 +2,7 @@ package edu.hitsz.dao;
 
 import edu.hitsz.application.ImageManager;
 
+import javax.swing.table.DefaultTableModel;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -22,6 +23,10 @@ public class PlayerDaoImpl implements PlayerDao{
         } else {
             this.fileName = "src/edu/hitsz/dao/players3.txt";
         }
+    }
+
+    public int getDifficulty() {
+        return difficulty;
     }
 
     @Override
@@ -83,7 +88,6 @@ public class PlayerDaoImpl implements PlayerDao{
                   .append(p.getPlayScore()).append(',')
                   .append(p.getPlayTime());
                 bw.write(sb.toString());
-                System.out.println(sb);
                 bw.newLine();
                 bw.flush();
             }
@@ -136,7 +140,7 @@ public class PlayerDaoImpl implements PlayerDao{
         }
     }
 
-    public String[][] listToStringArray() {
+    public DefaultTableModel listToModel() {
         String[][] playersArray = new String[this.players.size()][4];
         for (int i = 0; i < this.players.size(); i++) {
             playersArray[i][0] = Integer.toString(i+1);
@@ -144,7 +148,15 @@ public class PlayerDaoImpl implements PlayerDao{
             playersArray[i][2] = Integer.toString(players.get(i).getPlayScore());
             playersArray[i][3] = players.get(i).getPlayTime();
         }
-        return playersArray;
+        String[] columnName = {"排名","昵称","分数","时间"};
+        //表格模型
+        DefaultTableModel model = new DefaultTableModel(playersArray, columnName){
+            @Override
+            public boolean isCellEditable(int row, int col){
+                return false;
+            }
+        };
+        return model;
     }
 
 }
